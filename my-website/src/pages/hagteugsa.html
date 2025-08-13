@@ -302,12 +302,12 @@
         <div class="modal">
             <h2>새 학특사 등록</h2>
             <div class="form-group">
-                <label for="creatorInput">생성자 이름</label>
-                <input type="text" id="creatorInput">
+                <label for="creatorCodeInput">생성자 학생코드</label>
+                <input type="text" id="creatorCodeInput" oninput="autoFillCreatorName()">
             </div>
             <div class="form-group">
-                <label for="creatorCodeInput">생성자 학생코드</label>
-                <input type="text" id="creatorCodeInput">
+                <label for="creatorInput">생성자 이름</label>
+                <input type="text" id="creatorInput" readonly style="background: #f7fafc;">
             </div>
             <div class="form-group">
                 <label for="titleInput">학특사 제목</label>
@@ -373,6 +373,23 @@
         async function loadStudentData() {
             console.log('학생 데이터 로드 완료:', Object.keys(studentData).length + '명');
             console.log('학생 데이터 예시:', Object.entries(studentData).slice(0, 3));
+        }
+
+        // 학생코드 입력시 이름 자동 채우기 (생성자용)
+        function autoFillCreatorName() {
+            const codeInput = document.getElementById('creatorCodeInput');
+            const nameInput = document.getElementById('creatorInput');
+            const code = codeInput.value.trim();
+            
+            if (studentData[code]) {
+                nameInput.value = studentData[code].name;
+                nameInput.style.color = '#2d3748';
+                nameInput.style.backgroundColor = '#f0fff4';
+            } else {
+                nameInput.value = '';
+                nameInput.style.color = '#a0aec0';
+                nameInput.style.backgroundColor = '#f7fafc';
+            }
         }
 
         // 학특사 목록 조회
@@ -464,26 +481,22 @@
 
         // 학특사 참여
         async function joinHagteugsa(hagteugsaId) {
-            const memberName = prompt('참여자 이름을 입력하세요');
-            if (!memberName) return;
-            
             const memberCode = prompt('참여자 학생코드를 입력하세요');
             if (!memberCode) return;
+            
+            // 학생 데이터에서 이름 자동 찾기
+            const studentInfo = studentData[memberCode];
+            if (!studentInfo) {
+                alert('존재하지 않는 학생코드입니다.');
+                return;
+            }
+            
+            const memberName = studentInfo.name;
+            
+            if (!confirm(`${memberName}(${memberCode})로 참여하시겠습니까?`)) return;
 
             console.log('참여 시도 - 이름:', memberName, '코드:', memberCode);
             console.log('전체 학생 데이터:', studentData);
-
-            // 학생 데이터 검증
-            const studentInfo = studentData[memberCode];
-            if (!studentInfo || studentInfo.name !== memberName) {
-                console.log('검증 실패 - 입력값:', { name: memberName, code: memberCode });
-                if (!studentInfo) {
-                    alert('존재하지 않는 학생코드입니다.');
-                } else {
-                    alert(`입력한 이름과 학생코드가 일치하지 않습니다.\n학생코드 ${memberCode}의 이름: ${studentInfo.name}`);
-                }
-                return;
-            }
 
             try {
                 const response = await fetch('/api/hagteugsa/join', {
@@ -514,22 +527,17 @@
 
         // 학특사 삭제
         async function deleteHagteugsa(hagteugsaId, creatorName) {
-            const name = prompt('삭제하려면 이름을 입력하세요');
-            if (!name) return;
-            
             const code = prompt('삭제하려면 학생코드를 입력하세요');
             if (!code) return;
 
-            // 학생 데이터 검증
+            // 학생 데이터에서 이름 자동 찾기
             const studentInfo = studentData[code];
-            if (!studentInfo || studentInfo.name !== name) {
-                if (!studentInfo) {
-                    alert('존재하지 않는 학생코드입니다.');
-                } else {
-                    alert(`입력한 이름과 학생코드가 일치하지 않습니다.\n학생코드 ${code}의 이름: ${studentInfo.name}`);
-                }
+            if (!studentInfo) {
+                alert('존재하지 않는 학생코드입니다.');
                 return;
             }
+            
+            const name = studentInfo.name;
 
             // 생성자 확인
             if (name !== creatorName) {
@@ -565,6 +573,11 @@
             document.getElementById('titleInput').value = '';
             document.getElementById('descInput').value = '';
             document.getElementById('maxInput').value = 5;
+            
+            // 이름 입력 필드 스타일 초기화
+            const nameInput = document.getElementById('creatorInput');
+            nameInput.style.color = '#a0aec0';
+            nameInput.style.backgroundColor = '#f7fafc';
         }
 
         // 이벤트 리스너 설정

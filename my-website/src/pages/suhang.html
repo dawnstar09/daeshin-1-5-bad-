@@ -215,12 +215,12 @@
         <div class="modal">
             <h2>새 수행평가 추가</h2>
             <div class="form-group">
-                <label for="nameInput">이름</label>
-                <input type="text" id="nameInput" placeholder="이름을 입력하세요">
+                <label for="codeInput">학생코드</label>
+                <input type="text" id="codeInput" placeholder="학생코드를 입력하세요" oninput="autoFillName()">
             </div>
             <div class="form-group">
-                <label for="codeInput">학생코드</label>
-                <input type="text" id="codeInput" placeholder="학생코드를 입력하세요">
+                <label for="nameInput">이름</label>
+                <input type="text" id="nameInput" placeholder="이름이 자동으로 입력됩니다" readonly>
             </div>
             <div class="form-group">
                 <label for="subjectInput">과목</label>
@@ -266,6 +266,63 @@
             '8415': { name: '권율' },
             '5514': { name: '차이한' }
         };
+
+        // 전체 학생 데이터
+        const allStudents = {
+            '7545': { name: '강건', number: '10501' },
+            '8415': { name: '권율', number: '10502' },
+            '5083': { name: '김도엽', number: '10503' },
+            '8721': { name: '김도현', number: '10504' },
+            '4939': { name: '김민성', number: '10505' },
+            '8306': { name: '김아인', number: '10506' },
+            '1501': { name: '김우빈', number: '10507' },
+            '4419': { name: '김현', number: '10508' },
+            '9731': { name: '노승민', number: '10509' },
+            '8911': { name: '박민준', number: '10510' },
+            '2856': { name: '박상효', number: '10511' },
+            '5181': { name: '박승현', number: '10512' },
+            '5711': { name: '박주은', number: '10513' },
+            '8978': { name: '박준이', number: '10514' },
+            '9429': { name: '박준호', number: '10515' },
+            '8603': { name: '서지후', number: '10516' },
+            '2721': { name: '석진오', number: '10517' },
+            '3506': { name: '오병현', number: '10518' },
+            '9621': { name: '유재민', number: '10519' },
+            '5352': { name: '윤정연', number: '10520' },
+            '6321': { name: '이민주', number: '10521' },
+            '6241': { name: '이지성', number: '10522' },
+            '5011': { name: '이지혁', number: '10523' },
+            '2611': { name: '임문선', number: '10524' },
+            '5882': { name: '임지원', number: '10525' },
+            '2510': { name: '정찬영', number: '10526' },
+            '1983': { name: '조성윤', number: '10527' },
+            '3953': { name: '조윤찬', number: '10528' },
+            '3650': { name: '진찬종', number: '10529' },
+            '5514': { name: '차이한', number: '10530' },
+            '5215': { name: '최진명', number: '10531' },
+            '6662': { name: '최홍준', number: '10532' },
+            '9630': { name: '김선율', number: '10533' },
+            '2911': { name: '김정운', number: '10534' },
+            '2486': { name: '이준상', number: '10535' },
+            '6294': { name: '임주훈', number: '10536' }
+        };
+
+        // 학생코드 입력시 이름 자동 채우기
+        function autoFillName() {
+            const codeInput = document.getElementById('codeInput');
+            const nameInput = document.getElementById('nameInput');
+            const code = codeInput.value.trim();
+            
+            if (allStudents[code]) {
+                nameInput.value = allStudents[code].name;
+                nameInput.style.color = '#2d3748';
+                nameInput.style.backgroundColor = '#f0fff4';
+            } else {
+                nameInput.value = '';
+                nameInput.style.color = '#a0aec0';
+                nameInput.style.backgroundColor = '#fff';
+            }
+        }
 
         let suhangList = [];
 
@@ -389,6 +446,13 @@
                 return;
             }
 
+            // 학생 정보 재검증 (전체 학생 데이터에서)
+            const studentInfo = allStudents[code];
+            if (!studentInfo || studentInfo.name !== name) {
+                alert('학생 정보가 일치하지 않습니다.');
+                return;
+            }
+
             try {
                 const response = await fetch('/api/suhang/add', {
                     method: 'POST',
@@ -475,6 +539,11 @@
             document.getElementById('titleInput').value = '';
             document.getElementById('dateInput').value = '';
             document.getElementById('descInput').value = '';
+            
+            // 이름 입력 필드 스타일 초기화
+            const nameInput = document.getElementById('nameInput');
+            nameInput.style.color = '#a0aec0';
+            nameInput.style.backgroundColor = '#fff';
         }
 
         // 페이지 로드 시 수행평가 목록 로드

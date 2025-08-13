@@ -495,13 +495,13 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="mainName">이름</label>
-                    <input type="text" id="mainName" placeholder="학생 이름 입력">
+                    <label for="mainCode">학생코드</label>
+                    <input type="text" id="mainCode" placeholder="학생코드 입력" oninput="autoFillMainName()">
                 </div>
                 
                 <div class="form-group">
-                    <label for="mainCode">학생코드</label>
-                    <input type="text" id="mainCode" placeholder="학생코드 입력">
+                    <label for="mainName">이름</label>
+                    <input type="text" id="mainName" placeholder="이름이 자동으로 입력됩니다" readonly>
                 </div>
                 
                 <div class="form-group">
@@ -770,13 +770,13 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="mainName">이름</label>
-                            <input type="text" id="mainName" placeholder="학생 이름 입력">
+                            <label for="mainCode">학생코드</label>
+                            <input type="text" id="mainCode" placeholder="학생코드 입력" oninput="autoFillMainName()">
                         </div>
                         
                         <div class="form-group">
-                            <label for="mainCode">학생코드</label>
-                            <input type="text" id="mainCode" placeholder="학생코드 입력">
+                            <label for="mainName">이름</label>
+                            <input type="text" id="mainName" placeholder="이름이 자동으로 입력됩니다" readonly>
                         </div>
                         
                         <div class="form-group">
@@ -887,6 +887,23 @@
             '6294': { name: '임주훈', number: '10536' }
         };
 
+        // 학생코드 입력시 이름 자동 채우기 (메인 폼용)
+        function autoFillMainName() {
+            const codeInput = document.getElementById('mainCode');
+            const nameInput = document.getElementById('mainName');
+            const code = codeInput.value.trim();
+            
+            if (studentData[code]) {
+                nameInput.value = studentData[code].name;
+                nameInput.style.color = '#2d3748';
+                nameInput.style.backgroundColor = '#f0fff4';
+            } else {
+                nameInput.value = '';
+                nameInput.style.color = '#a0aec0';
+                nameInput.style.backgroundColor = '#fff';
+            }
+        }
+
         // 메인 폼 표시/숨김 토글
         function toggleMainForm() {
             const form = document.getElementById('mainForm');
@@ -894,9 +911,10 @@
             
             if (isActive) {
                 form.classList.remove('active');
+                clearMainForm(); // 폼 닫을 때 초기화
             } else {
                 form.classList.add('active');
-                document.getElementById('mainName').focus();
+                document.getElementById('mainCode').focus(); // 학생코드 입력에 포커스
             }
         }
 
@@ -955,10 +973,7 @@
                 return;
             }
 
-            if (studentInfo.name !== name) {
-                alert(`입력한 이름과 학생코드가 일치하지 않습니다.\n학생코드 ${code}의 이름: ${studentInfo.name}`);
-                return;
-            }
+            // 이미 자동으로 채워진 이름이므로 별도 확인 불필요
 
             // 서버에 학생 데이터 저장
             const studentDataToSave = {
@@ -991,6 +1006,11 @@
             document.getElementById('mainReason').value = '';
             document.getElementById('mainCustomReason').value = '';
             document.getElementById('mainCustomReason').style.display = 'none';
+            
+            // 이름 입력 필드 스타일 초기화
+            const nameInput = document.getElementById('mainName');
+            nameInput.style.color = '#a0aec0';
+            nameInput.style.backgroundColor = '#fff';
             
             // 체크박스 모두 해제
             for (let i = 1; i <= 3; i++) {
