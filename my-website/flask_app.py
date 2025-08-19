@@ -5,10 +5,30 @@ from flask import Flask, jsonify, request
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 
+# PostgreSQL 지원 추가
+try:
+    import psycopg2
+    import psycopg2.extras
+    POSTGRES_AVAILABLE = True
+except ImportError:
+    POSTGRES_AVAILABLE = False
+
 _root_dir = os.path.dirname(os.path.abspath(__file__))
 _static_folder = os.path.join(_root_dir, 'src')
 
 app = Flask(__name__, static_folder=_static_folder, static_url_path='')
+
+# 데이터베이스 연결 함수
+def get_db_connection():
+    DATABASE_URL = os.environ.get('DATABASE_URL')
+    if DATABASE_URL and POSTGRES_AVAILABLE:
+        # PostgreSQL 연결 (Supabase)
+        conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
+        return conn, 'postgres'
+    else:
+        # SQLite 연결 (로컬/백업)
+        conn = sqlite3.connect('users.db')
+        return conn, 'sqlite'
 
 # DB 초기화 함수
 def init_db():
@@ -123,15 +143,22 @@ def add_yaja_student():
         if not all([date, periods, student_name, student_code, student_number, reason]):
             return {'success': False, 'msg': '모든 필드를 입력하세요.'}, 400
         
-        conn = sqlite3.connect('users.db')
-        c = conn.cursor()
+        conn, db_type = get_db_connection()
         
         # 각 차시별로 데이터 삽입
         for period in periods:
-            c.execute('''INSERT INTO yaja_students 
-                         (date, period, student_name, student_code, student_number, reason)
-                         VALUES (?, ?, ?, ?, ?, ?)''',
-                      (date, period, student_name, student_code, student_number, reason))
+            if db_type == 'postgres':
+                cursor = conn.cursor()
+                cursor.execute('''INSERT INTO yaja_students 
+                                 (date, period, student_name, student_code, student_number, reason)
+                                 VALUES (%s, %s, %s, %s, %s, %s)''',
+                              (date, period, student_name, student_code, student_number, reason))
+            else:
+                c = conn.cursor()
+                c.execute('''INSERT INTO yaja_students 
+                             (date, period, student_name, student_code, student_number, reason)
+                             VALUES (?, ?, ?, ?, ?, ?)''',
+                          (date, period, student_name, student_code, student_number, reason))
         
         conn.commit()
         conn.close()
