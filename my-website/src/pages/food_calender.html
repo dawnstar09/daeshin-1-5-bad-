@@ -15,30 +15,35 @@
             padding: 2.5rem;
         }
 
-        /* 석식 이미지 스타일 */
-        .suksik-image {
+        /* 석식 이미지 스타일 (중식 메뉴 아래에 크게) */
+        .suksik-section {
             text-align: center;
+            margin-top: 3rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+            border-radius: 1.5rem;
+            padding: 3rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .suksik-section h3 {
+            color: #6366f1;
+            font-size: 2.2rem;
+            font-weight: 700;
             margin-bottom: 2rem;
         }
 
-        .suksik-image img {
-            max-width: 100%;
+        .suksik-section img {
+            width: 100%;
+            max-width: 800px;
             height: auto;
-            max-height: 300px;
-            border-radius: 1rem;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            border-radius: 1.5rem;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .suksik-image img:hover {
+        .suksik-section img:hover {
             transform: scale(1.02);
-        }
-
-        .suksik-image h3 {
-            margin-top: 1rem;
-            color: #6366f1;
-            font-size: 1.3rem;
-            font-weight: 600;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.2);
         }
 
         .meal-week {
@@ -195,12 +200,19 @@
             }
             
             /* 모바일에서 석식 이미지 크기 조정 */
-            .suksik-image img {
-                max-height: 200px;
+            .suksik-section {
+                padding: 2rem 1rem;
+                margin-top: 2rem;
             }
             
-            .suksik-image h3 {
-                font-size: 1.1rem;
+            .suksik-section h3 {
+                font-size: 1.8rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .suksik-section img {
+                max-width: 100%;
+                border-radius: 1rem;
             }
         }
     </style>
@@ -213,14 +225,14 @@
     <div class="meal-container">
         <h2>🍽️ 이번 주 급식 메뉴</h2>
         
-        <!-- 석식 이미지 추가 -->
-        <div class="suksik-image">
-            <img src="../images/suksik.png" alt="석식 메뉴" />
-            <h3>🌙 석식 메뉴</h3>
-        </div>
-        
         <div id="mealContent" class="loading">
             급식 메뉴를 불러오는 중...
+        </div>
+        
+        <!-- 석식 이미지를 중식 메뉴 아래에 크게 배치 -->
+        <div class="suksik-section">
+            <h3>🌙 석식 메뉴</h3>
+            <img src="../images/suksik.png" alt="석식 메뉴" />
         </div>
     </div>
 
