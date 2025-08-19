@@ -15,6 +15,32 @@
             padding: 2.5rem;
         }
 
+        /* 석식 이미지 스타일 */
+        .suksik-image {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .suksik-image img {
+            max-width: 100%;
+            height: auto;
+            max-height: 300px;
+            border-radius: 1rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .suksik-image img:hover {
+            transform: scale(1.02);
+        }
+
+        .suksik-image h3 {
+            margin-top: 1rem;
+            color: #6366f1;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
         .meal-week {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -167,6 +193,15 @@
                 padding: 1.5rem;
                 margin: 1rem;
             }
+            
+            /* 모바일에서 석식 이미지 크기 조정 */
+            .suksik-image img {
+                max-height: 200px;
+            }
+            
+            .suksik-image h3 {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -177,6 +212,13 @@
 
     <div class="meal-container">
         <h2>🍽️ 이번 주 급식 메뉴</h2>
+        
+        <!-- 석식 이미지 추가 -->
+        <div class="suksik-image">
+            <img src="../images/suksik.png" alt="석식 메뉴" />
+            <h3>🌙 석식 메뉴</h3>
+        </div>
+        
         <div id="mealContent" class="loading">
             급식 메뉴를 불러오는 중...
         </div>
