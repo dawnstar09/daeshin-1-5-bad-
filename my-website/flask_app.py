@@ -368,7 +368,7 @@ def delete_hagteugsa(hagteugsa_id):
 
 @app.route('/')
 def index():
-    return app.send_static_file('index.html')
+    return app.send_static_file('index_kena_style.html')
 
 @app.route('/api/meal')
 def get_meal_data():
